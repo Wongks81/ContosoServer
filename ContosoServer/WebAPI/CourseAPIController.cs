@@ -116,8 +116,27 @@ namespace ContosoServer.WebAPI
 
         // DELETE api/<CourseAPIController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            try
+            {
+                Course c = (from temp in _ContosoDbContext.dbCourse
+                            select temp)
+                            .First(temp => temp.CourseId == id);
+                if (c == null)
+                {
+                    return NotFound();
+                }
+
+                _ContosoDbContext.dbCourse.Remove(c);
+                _ContosoDbContext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
     }
 }
