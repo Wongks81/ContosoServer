@@ -90,8 +90,28 @@ namespace ContosoServer.WebAPI
 
         // PUT api/<CourseAPIController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] Course obj)
         {
+            try
+            {
+                Course c = (from temp in _ContosoDbContext.dbCourse
+                            select temp)
+                            .First(temp => temp.CourseId == id);
+                if (c == null)
+                {
+                    return NotFound();
+                }
+
+                c.CourseName = obj.CourseName;
+                _ContosoDbContext.dbCourse.Update(c);
+                _ContosoDbContext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // DELETE api/<CourseAPIController>/5

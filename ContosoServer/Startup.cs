@@ -39,6 +39,9 @@ namespace ContosoServer
                    .AllowAnyHeader();
                }));
 
+            //to prevent confusion for camel and pascal cases
+            services.AddControllers().AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
