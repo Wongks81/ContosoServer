@@ -27,15 +27,38 @@ namespace ContosoServer.WebAPI
         [HttpGet]
         public IActionResult Get()
         {
-            List<Student> studList = _ContosoDbContext.dbStudent.ToList<Student>();
-            return StatusCode(StatusCodes.Status200OK, studList);
+            try
+            {
+                List<Student> studList = _ContosoDbContext.dbStudent.ToList<Student>();
+                return StatusCode(StatusCodes.Status200OK, studList);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // GET api/<StudentAPIController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            try
+            {
+              
+                Student s = (from temp in _ContosoDbContext.dbStudent
+                            select temp)
+                            .First(temp => temp.StudentId == id);
+                if (s == null)
+                {
+                    return NotFound();
+                }
+                return StatusCode(StatusCodes.Status200OK, s);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // POST api/<StudentAPIController>
@@ -70,14 +93,55 @@ namespace ContosoServer.WebAPI
 
         // PUT api/<StudentAPIController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] Student obj)
         {
+            try
+            {
+                Student s = (from temp in _ContosoDbContext.dbStudent
+                            select temp)
+                            .First(temp => temp.StudentId == id);
+                if (s == null)
+                {
+                    return NotFound();
+                }
+
+                s.StudentName = obj.StudentName;
+                s.AdmissionDate = obj.AdmissionDate;
+                s.CourseId = obj.CourseId;
+                _ContosoDbContext.dbStudent.Update(s);
+                _ContosoDbContext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // DELETE api/<StudentAPIController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            try
+            {
+                Student s = (from temp in _ContosoDbContext.dbStudent
+                            select temp)
+                            .First(temp => temp.StudentId == id);
+                if (s == null)
+                {
+                    return NotFound();
+                }
+
+                _ContosoDbContext.dbStudent.Remove(s);
+                _ContosoDbContext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
     }
 }
