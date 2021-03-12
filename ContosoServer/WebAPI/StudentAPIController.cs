@@ -106,7 +106,7 @@ namespace ContosoServer.WebAPI
                 }
 
                 s.StudentName = obj.StudentName;
-                s.AdmissionDate = obj.AdmissionDate;
+                s.AdmissionDate = obj.AdmissionDate.ToLocalTime();
                 s.CourseId = obj.CourseId;
                 _ContosoDbContext.dbStudent.Update(s);
                 _ContosoDbContext.SaveChanges();
