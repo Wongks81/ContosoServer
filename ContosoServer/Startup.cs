@@ -69,7 +69,7 @@ namespace ContosoServer
             app.UseRouting();
 
             //Use the Cors, check the program loading sequence, run it before authorization module
-            app.UseCors("SiteCorsPolicy");
+            //app.UseCors("SiteCorsPolicy");
 
             app.UseAuthorization();
 
